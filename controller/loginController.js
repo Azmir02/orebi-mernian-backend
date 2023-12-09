@@ -7,20 +7,23 @@ async function loginController(req, res) {
 
 
     if (!emailValidation(email)) {
-        return res.status(400).send({
-            error: "Please enter a valid email address"
+        return res.status(400).json({
+            message: "Please enter a valid email address"
         })
     }
 
     let existingEmail = await User.find({ email })
 
+
     if (existingEmail.length > 0) {
         bcrypt.compare(password, existingEmail[0].password, function (err, result) {
             if (result) {
                 return res.json({
-                    "Success": "Login Successfully",
-                    "firstName": existingEmail[0].firstName,
-                    "lastName": existingEmail[0].lastName,
+                    Success: "Login Successfully",
+                    firstName: existingEmail[0].firstName,
+                    lastName: existingEmail[0].lastName,
+                    email: existingEmail[0].email,
+                    id: existingEmail[0]._id,
                 })
             } else {
                 return res.status(400).send({
@@ -29,8 +32,8 @@ async function loginController(req, res) {
             }
         });
     } else {
-        return res.status(400).send({
-            error: "Email Not Matched"
+        return res.status(400).json({
+            message: "Email Not Matched"
         })
     }
 
